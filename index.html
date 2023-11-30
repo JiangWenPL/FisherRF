@@ -1,1 +1,424 @@
-<h1>Hello, world!</h1>
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+    content="FisherRF: Active View Selection and Uncertainty Quantification for Radiance Fields using Fisher Information.">
+  <meta name="keywords" content="Nerfies, D-NeRF, NeRF">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FisherRF: Active View Selection and Uncertainty Quantification for Radiance Fields using Fisher Information
+  </title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MVZEHLY393"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-MVZEHLY393');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script src="static/js/before-after.js"></script>
+
+
+</head>
+
+<body>
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">FisherRF: Active View Selection and Uncertainty Quantification for
+              Radiance Fields using Fisher Informations</h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://jiangwenpl.github.io/">Wen Jiang</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=grdM_0IAAAAJ&hl=en">Boshu Lei</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a href="https://www.cis.upenn.edu/~kostas/">Kostas Daniilidis</a><sup>1,2</sup>
+              </span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>University of Pennsylvania,</span>
+              <span class="author-block"><sup>2</sup>Archimedes, Athena RC</span>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <!-- PDF Link. -->
+                <span class="link-block">
+                  <a href="https://arxiv.org/pdf/2311.17874.pdf" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                    </span>
+                    <span>Paper</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/2311.17874" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>arXiv</span>
+                  </a>
+                </span>
+                <!-- Video Link. -->
+                <!-- <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+                <!-- Code Link. -->
+                <span class="link-block">
+                  <a href="https://github.com/JiangWenPL/FisherRF"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+                <!-- <span class="link-block">
+                  <a href="https://arxiv.org/pdf/2011.12948" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                    </span>
+                    <span>Supp.</span>
+                  </a>
+                </span> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body">
+        <!-- <video id="teaser" autoplay muted loop playsinline height="100%">
+          <source src="./static/videos/teaser.mp4" type="video/mp4">
+        </video> -->
+        <div style="text-align: center;">
+          <img src="static/images/teaser.jpg" , width="75%" , class="center">
+        </div>
+        <h2 class="subtitle has-text-centered">
+          <span class="dnerf">FisherRF</span> compute the Fihser Information for the model and could select next best
+          views or quantify pixel-wise uncertainty for its renderings.
+        </h2>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- <section class="hero is-light is-small">
+    <div class="hero-body">
+      <div class="container">
+        <div id="results-carousel" class="carousel results-carousel">
+          <div class="item item-steve">
+            <video poster="" id="steve" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/steve.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item item-chair-tp">
+            <video poster="" id="chair-tp" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/chair-tp.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item item-shiba">
+            <video poster="" id="shiba" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/shiba.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Abstract. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              This study addresses the challenging problem of active view selection and uncertainty quantification
+              within the domain of Radiance Fields. Neural Radiance Fields (NeRF) have greatly advanced image rendering
+              and reconstruction, but the limited availability of 2D images poses uncertainties stemming from
+              occlusions, depth ambiguities, and imaging errors. Efficiently selecting informative views becomes
+              crucial, and quantifying NeRF model uncertainty presents intricate challenges.
+              Existing approaches either depend on model architecture or are based on assumptions regarding density
+              distributions that are not generally applicable.
+              By leveraging Fisher Information, we efficiently quantify observed information within Radiance Fields
+              without ground truth data. This can be used for the next best view selection and pixel-wise uncertainty
+              quantification.
+              Our method overcomes existing limitations on model architecture and effectiveness, achieving
+              state-of-the-art results in both view selection and uncertainty quantification, demonstrating its
+              potential to advance the field of Radiance Fields. Our method with the 3D Gaussian Splatting backend could
+              perform view selections at 70~fps.
+            </p>
+          </div>
+        </div>
+      </div>
+      <!--/ Abstract. -->
+
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Visual Comparisons after Active View Selection</h2>
+      <div class="content has-text-justified">
+        <p>
+
+        </p>
+      </div>
+      <div class="columns is-centered">
+        <!-- Visual Effects. -->
+        <div class="column">
+          <div class="content">
+            <div class="columns is-centered">
+              <div class="column is-full-width">
+                <div id="example1" class="bal-container-small">
+
+                  <div class="bal-after">
+                    <img src="static/images/our-room-2.png">
+                    <div class="bal-afterPosition afterLabel" style="z-index:1;">
+                      Ours
+                    </div>
+                  </div>
+
+                  <div class="bal-before" style="width:91.87279151943463%;">
+                    <div class="bal-before-inset" style="width: 628px;">
+                      <img src="static/images/rand-room-2.png">
+                      <div class="bal-beforePosition beforeLabel">
+                        Random
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="bal-handle" style="left:91.87279151943463%;">
+                    <span class=" handle-left-arrow"></span>
+                    <span class="handle-right-arrow"></span>
+                  </div>
+
+                </div>
+
+
+                <div id="example2" class="bal-container-small">
+
+                  <div class="bal-after">
+                    <img src="static/images/our-counter-4.png">
+                    <div class="bal-afterPosition afterLabel">
+                      Ours
+                    </div>
+                  </div>
+
+                  <div class="bal-before" style="width: 50%;">
+                    <div class="bal-before-inset" style="width: 628px;">
+                      <img src="static/images/rand-coutner-4.png">
+                      <div class="bal-beforePosition beforeLabel">
+                        Random
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="bal-handle" style="left: 50%;">
+                    <span class=" handle-left-arrow"></span>
+                    <span class="handle-right-arrow"></span>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--/ First Column -->
+
+        <!-- Second Column -->
+        <div class="column">
+          <div class="columns is-centered">
+            <div class="column content">
+
+              <div id="example3" class="bal-container-small">
+                <div class="bal-after">
+                  <img src="static/images/our-garden-0.png">
+                  <div class="bal-afterPosition afterLabel" style="z-index:1;">
+                    Ours
+                  </div>
+                </div>
+
+                <div class="bal-before" style="width:97.70318021201413%;">
+                  <div class="bal-before-inset" style="width: 628px;">
+                    <img src="static/images/ac-garden-0.png">
+                    <div class="bal-beforePosition beforeLabel">
+                      ActiveNeRF(3D Gaussian Reproduced)
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bal-handle" style="left:97.70318021201413%;">
+                  <span class=" handle-left-arrow"></span>
+                  <span class="handle-right-arrow"></span>
+                </div>
+
+              </div>
+
+              <div id="example4" class="bal-container-small">
+                <div class="bal-after">
+                  <img src="static/images/our-bonsai-2.png">
+                  <div class="bal-afterPosition afterLabel" style="z-index:1;">
+                    Ours
+                  </div>
+                </div>
+
+                <div class="bal-before" style="width:9.872611464968152%;">
+                  <div class="bal-before-inset" style="width: 566px;">
+                    <img src="static/images/ac-bonsai-2.png">
+                    <div class="bal-beforePosition beforeLabel">
+                      ActiveNeRF(3D Gaussian Reproduced)
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bal-handle" style="left:9.872611464968152%;">
+                  <span class=" handle-left-arrow"></span>
+                  <span class="handle-right-arrow"></span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <section>
+    <div class="container is-max-desktop">
+      <!-- Concurrent Work. -->
+      <div class="columns is-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">Related Links</h2>
+
+          <div class="content has-text-justified">
+            <!-- <p>
+              There's a lot of excellent work that was introduced around the same time as ours.
+            </p> -->
+            <p>
+              <a href="https://bayesrays.github.io/">Bayesian Rays</a> is an excellent concurrent work that also exploits the Fisher Information in uncertainty quantification for NeRF models. 
+            </p>
+            <p>
+              This project builds heavily on <a href="https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/">3D Gaussian Splatting</a> and <a href="https://alexyu.net/plenoxels/">plenoxels</a>. We thanks the authors for their excellent works!
+            </p>
+            <!-- <p>
+              <a href="https://zikeyan.github.io/active-INR/index.html">Active-INR</a> also exploits second order information during Neural Mapping by weight perturbation.
+            </p> -->
+            <!-- <p>
+              Some works model videos with a NeRF by directly modulating the density, such as <a
+                href="https://video-nerf.github.io/">Video-NeRF</a>, <a
+                href="https://www.cs.cornell.edu/~zl548/NSFF/">NSFF</a>, and <a
+                href="https://neural-3d-video.github.io/">DyNeRF</a>
+            </p>
+            <p>
+              There are probably many more by the time you are reading this. Check out <a
+                href="https://dellaert.github.io/NeRF/">Frank Dellart's survey on recent NeRF papers</a>, and <a
+                href="https://github.com/yenchenlin/awesome-NeRF">Yen-Chen Lin's curated list of NeRF papers</a>.
+            </p> -->
+          </div>
+        </div>
+      </div>
+      <!--/ Concurrent Work. -->
+
+    </div>
+  </section>
+
+
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@article{Jiang2023FisherRF,
+      title={FisherRF: Active View Selection and Uncertainty Quantification for Radiance Fields using Fisher Information},
+      author={Wen Jiang and Boshu Lei and Kostas Daniilidis},
+      journal={arXiv},
+      year={2023}
+  }</code></pre>
+    </div>
+  </section>
+
+
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered">
+        <a class="icon-link" href="https://arxiv.org/pdf/2311.17874.pdf">
+          <i class="fas fa-file-pdf"></i>
+        </a>
+        <a class="icon-link" href="https://github.com/JiangWenPL/FisherRF" class="external-link" disabled>
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              We thank the authors of <a href="https://nerfies.github.io/">Nerfies</a> that kindly open sourced the
+              template of this website.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script>
+    new BeforeAfter({
+      id: '#example1'
+    });
+    new BeforeAfter({
+      id: '#example2'
+    });
+    new BeforeAfter({
+      id: '#example3'
+    });
+    new BeforeAfter({
+      id: '#example4'
+    });
+  </script>
+
+</body>
+
+</html>
