@@ -1,0 +1,16 @@
+*.pyc
+.vscode
+output
+build
+diff/diff_rasterization/diff_rast.egg-info
+diff/diff_rasterization/dist
+tensorboard_3d
+screenshots
+simple-knn/diff_rast.egg-info
+simple-knn/diff_rasterization/dist
+*.so
+*.egg-info
+__pycache__
+wandb
+# Variance branch is not incoprated in this branch
+var_diff

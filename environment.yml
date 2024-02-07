@@ -1,0 +1,22 @@
+name: gaussian
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - pytorch-cuda=11.7
+  - plyfile=0.8.1
+  - python=3.10
+  - pip
+  - pytorch
+  - torchaudio
+  - torchvision
+  - tqdm
+  - jupyter
+  - pip:
+      einops
+      ipdb
+    #  - pip:
+    #    - submodules/diff-gaussian-rasterization
+    #    - submodules/simple-knn
