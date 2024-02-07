@@ -33,10 +33,6 @@ The MipNeRF360 scenes are hosted by the paper authors [here](https://jonbarron.i
 
 ## Running our code
 
-`active_train.py` is the entry to for our algorithm. You may use `-s` to specify the folder to the scene such as `.../blender/lego/` and `-m` for the folder of output. The folder name would be used as the `id` for wandb experiment.
-You may choose the schema from `v20seq1_inplace` and `v20seq4_inplace` for batch selection
-
-<!-- Run training and testing on Blender and Mip360 dataset with different configuration: -->
 Please use scripts under `./scripts/` to run different experiments with different configurations. The first arguments of the script is the path to the scene that contains `trainsforms_*.json` and the second is the path which you would like to save your experiment. For example:
 ```bash
 bash scripts/blender_seq1.sh /PATH/TO/YOUR/DATASET/lego YOUR_EXP_PATH
