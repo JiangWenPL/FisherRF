@@ -25,6 +25,7 @@ git clone git@github.com:JiangWenPL/FisherRF.git --recursive
 pip install submodules/diff-gaussian-rasterization/
 pip install submodules/simple-knn/
 pip install -e ./diff/ -v
+pip install -e ./var_diff -v # install ActiveNeRF version
 ```
 
 ### Download Datasets (Optional)
@@ -35,7 +36,11 @@ The MipNeRF360 scenes are hosted by the paper authors [here](https://jonbarron.i
 
 Please use scripts under `./scripts/` to run different experiments with different configurations. The first arguments of the script is the path to the scene that contains `trainsforms_*.json` and the second is the path which you would like to save your experiment. For example:
 ```bash
-bash scripts/blender_seq1.sh /PATH/TO/YOUR/DATASET/lego YOUR_EXP_PATH
+# Run 3D GS + FisherRF
+bash scripts/blender_seq1.sh /PATH/TO/YOUR/DATASET/lego YOUR_EXP_PATH H_reg
+
+# Run 3D GS + ActiveNeRF
+bash scripts/blender_seq1.sh /PATH/TO/YOUR/DATASET/lego YOUR_EXP_PATH variance
 ```
 
 
