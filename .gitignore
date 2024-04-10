@@ -12,5 +12,4 @@ simple-knn/diff_rasterization/dist
 *.egg-info
 __pycache__
 wandb
-# Variance branch is not incoprated in this branch
-var_diff
+logs/
