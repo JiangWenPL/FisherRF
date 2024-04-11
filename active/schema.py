@@ -117,3 +117,9 @@ schema_dict: Dict[str, BaseSchema] = {'all': All, "debug": V20Seq1Debug,
                                       "v20seq1_inplace": V20Seq1Inplace, "v10seq1_inplace": V10Seq1Inplace,
                                       "v20seq4_inplace": V20Seq4Inplace,
                                       }
+
+override_test_idxs_dict: Dict[str, List[int]] = {"basket": list(range(42, 50,2)), "africa": list(range(6, 14, 2)),
+                                            "statue": list(range(68, 76, 2)), "torch": list(range(9, 17, 2))}
+
+override_train_idxs_dict: Dict[str, List[int]] = {"basket": list(range(43, 50,2)), "africa": list(range(5, 14, 2)),
+                                            "statue": list(range(67, 76, 2)), "torch": list(range(8, 17, 2))}
