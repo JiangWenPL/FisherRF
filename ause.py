@@ -76,11 +76,9 @@ for index in range(4):
         if obj == "statue":
             scale = 1.1
         elif obj == "africa":
-            # scale = 2 / 0.6968
             scale = 4.9
         elif obj == "torch":
             scale = 6.
-            # scale = 1.
         else:
             scale = 1
         
@@ -99,11 +97,9 @@ for index in range(4):
         if opt.model_path is None:
             pred_files = sorted(glob(f"./gaussian_{obj}/uncertainty_*.npz"))
         else:
-            # pred_files = sorted(glob(f"{opt.model_path}/uncertainty_*.npz"))
             pred_files = sorted(glob(f"{opt.model_path}/eval/*.npz"))
 
         pred_file = pred_files[index]
-        # pred_file = "./{obj}-eval/gaussian_{}_full/{:05d}_pred.npz".format(obj, opt.idx)
         data = np.load(pred_file)
         
         if obj == "statue":
@@ -119,21 +115,13 @@ for index in range(4):
         else:
             scale = 1
         
-        # import pdb; pdb.set_trace()
         uncern = torch.from_numpy(data["uncertanity_map"])
         pixel_gaussian_counter = data["pixel_gaussian_counter"]
-        # uncern = torch.from_numpy(data["uncern"])
-        # pixel_gaussian_counter = 1
-
-        # uncern = uncern / pixel_gaussian_counter
-
-        # uncern = F.interpolate(uncern[None, None, ...], depth_gt.shape, mode="bilinaer", align_corners=False)[0, 0].numpy()
         uncern = F.interpolate(uncern[None, None, ...], depth_gt.shape, mode="nearest")[0, 0].numpy()
         uncern = np.log(uncern)
         uncern = np.where(np.isinf(uncern), uncern.max(), uncern)
         
         depth_pred = torch.from_numpy(data["depth"])
-        # depth_pred = F.interpolate(depth_pred[None, None, ...], depth_gt.shape, mode="bilinaer", align_corners=False)[0, 0] 
         depth_pred = F.interpolate(depth_pred[None, None, ...], depth_gt.shape, mode="nearest")[0, 0] 
 
         if opt.auto_scale:
@@ -157,8 +145,6 @@ for index in range(4):
         if obj == "statue":
             scale = 1   
         elif obj == "torch":
-            # scale = 1 / 20
-            # scale = 8 # used for 4 views
             scale = 6
         elif obj == "africa":
             scale = 4
@@ -198,11 +184,9 @@ for index in range(4):
         if obj == "statue":
             scale = 1.
         elif obj == "africa":
-            # scale = 2 / 0.6968
             scale = 4.9
         elif obj == "torch":
             scale = 6.
-            # scale = 1.
         elif obj == "basket":
             scale = 7.2
         else:
@@ -223,7 +207,6 @@ for index in range(4):
         ax4.imshow(depth_gt)
 
         ax5.imshow(depth_error_map)
-        # ax6.imshow(np.log(uncern))
         ax6.imshow((uncern))
 
         # Initialization function: plot the background of each frame
@@ -285,7 +268,6 @@ for index in range(4):
     ause_err_by_var = ause_err_by_var / max_val
     ause_err_by_var = np.array(ause_err_by_var)
     ause = np.trapz(ause_err_by_var - ause_err, ratio_removed[:len(ause_err)])
-    # ax4.plot(ratio_removed, ause_err_by_var - ause_err)
     print(f"ause: {ause}")
 
     if opt.viz:

@@ -187,23 +187,21 @@ def render_set_current(model_path, name, iteration, train_views, test_views, gau
 
 
 def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParams, agrs):
-    # with torch.no_grad():
-    if True:
-        gaussians = GaussianModel(dataset.sh_degree)
+    gaussians = GaussianModel(dataset.sh_degree)
 
-        # override_train_idxs = override_train_idxs_dict.get(args.override_idxs, None)
-        # use every frames
-        override_train_idxs = list(range(10_000))
-        override_test_idxs = override_test_idxs_dict.get(args.override_idxs, None)
-        scene = Scene(dataset, gaussians, load_iteration=iteration, shuffle=False, override_train_idxs=override_train_idxs, override_test_idxs=override_test_idxs)
+    # override_train_idxs = override_train_idxs_dict.get(args.override_idxs, None)
+    # use every frames
+    override_train_idxs = list(range(10_000))
+    override_test_idxs = override_test_idxs_dict.get(args.override_idxs, None)
+    scene = Scene(dataset, gaussians, load_iteration=iteration, shuffle=False, override_train_idxs=override_train_idxs, override_test_idxs=override_test_idxs)
 
-        bg_color = [1,1,1] if dataset.white_background else [0, 0, 0]
-        background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
+    bg_color = [1,1,1] if dataset.white_background else [0, 0, 0]
+    background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
 
-        if args.current:
-            render_set_current(dataset.model_path, "train", scene.loaded_iter, scene.getTrainCameras(), scene.getTestCameras(), gaussians, pipeline, background, camera_extent=scene.cameras_extent, args=args)
-        else:
-            render_set(dataset.model_path, "train", scene.loaded_iter, scene.getTrainCameras(), scene.getTestCameras(), gaussians, pipeline, background, camera_extent=scene.cameras_extent, args=args)
+    if args.current:
+        render_set_current(dataset.model_path, "train", scene.loaded_iter, scene.getTrainCameras(), scene.getTestCameras(), gaussians, pipeline, background, camera_extent=scene.cameras_extent, args=args)
+    else:
+        render_set(dataset.model_path, "train", scene.loaded_iter, scene.getTrainCameras(), scene.getTestCameras(), gaussians, pipeline, background, camera_extent=scene.cameras_extent, args=args)
 
 
 if __name__ == "__main__":

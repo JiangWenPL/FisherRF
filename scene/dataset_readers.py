@@ -130,7 +130,7 @@ def storePly(path, xyz, rgb):
     ply_data = PlyData([vertex_element])
     ply_data.write(path)
 
-def readColmapSceneInfo(path, images, eval, llffhold=8, random_init_pcd=-1, override_train_idxs=None, override_test_idxs=None):
+def readColmapSceneInfo(path, images, eval, llffhold=8, random_init_pcd=-1):
     try:
         cameras_extrinsic_file = os.path.join(path, "sparse/0", "images.bin")
         cameras_intrinsic_file = os.path.join(path, "sparse/0", "cameras.bin")
@@ -146,16 +146,12 @@ def readColmapSceneInfo(path, images, eval, llffhold=8, random_init_pcd=-1, over
     cam_infos_unsorted = readColmapCameras(cam_extrinsics=cam_extrinsics, cam_intrinsics=cam_intrinsics, images_folder=os.path.join(path, reading_dir))
     cam_infos = sorted(cam_infos_unsorted.copy(), key = lambda x : x.image_name)
 
-    if override_test_idxs is not None:
-        test_cam_infos = [c for idx, c in enumerate(cam_infos) if idx in override_test_idxs]
-        train_cam_infos = [c for idx, c in enumerate(cam_infos) if idx in override_train_idxs]
+    if eval:
+        train_cam_infos = [c for idx, c in enumerate(cam_infos) if idx % llffhold != 0]
+        test_cam_infos = [c for idx, c in enumerate(cam_infos) if idx % llffhold == 0]
     else:
-        if eval:
-            test_cam_infos = [c for idx, c in enumerate(cam_infos) if idx % llffhold == 0]
-            train_cam_infos = [c for idx, c in enumerate(cam_infos) if idx % llffhold != 0]
-        else:
-            train_cam_infos = cam_infos
-            test_cam_infos = []
+        train_cam_infos = cam_infos
+        test_cam_infos = []
 
     nerf_normalization = getNerfppNorm(train_cam_infos)
 
@@ -173,23 +169,6 @@ def readColmapSceneInfo(path, images, eval, llffhold=8, random_init_pcd=-1, over
         pcd = fetchPly(ply_path)
     except:
         pcd = None
-
-    if random_init_pcd > 0:
-        # Since this data set has no colmap data, we start with random points
-        num_pts = random_init_pcd
-        _, temp_ply_path = tempfile.mkstemp(suffix=".ply")
-
-        print(f"Generating random point cloud ({num_pts})...")
-        extent = nerf_normalization["radius"] * 2.5
-        
-        # We create random points inside the bounds of the synthetic Blender scenes
-        xyz = np.random.random((num_pts, 3)) * extent - 0.5 * extent
-        shs = np.random.random((num_pts, 3)) / 255.0
-        pcd = BasicPointCloud(points=xyz, colors=SH2RGB(shs), normals=np.zeros((num_pts, 3)))
-
-        storePly(temp_ply_path, xyz, SH2RGB(shs) * 255)
-        pcd = fetchPly(temp_ply_path)
-        os.remove(temp_ply_path)
 
     scene_info = SceneInfo(point_cloud=pcd,
                            train_cameras=train_cam_infos,
