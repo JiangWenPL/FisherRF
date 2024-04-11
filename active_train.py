@@ -1,3 +1,14 @@
+#
+# Copyright (C) 2023, Inria
+# GRAPHDECO research group, https://team.inria.fr/graphdeco
+# All rights reserved.
+#
+# This software is free for non-commercial, research and evaluation use 
+# under the terms of the LICENSE.md file.
+#
+# For inquiries contact  george.drettakis@inria.fr
+#
+
 import os
 import torch
 from random import randint
@@ -11,7 +22,7 @@ from tqdm import tqdm
 from utils.image_utils import psnr
 from argparse import ArgumentParser, Namespace
 from arguments import ModelParams, PipelineParams, OptimizationParams
-from active.schema import schema_dict
+from active.schema import schema_dict, override_test_idxs_dict, override_train_idxs_dict
 from utils.loss_utils import ssim
 from lpipsPyTorch import lpips, lpips_func
 from active import methods_dict
@@ -55,7 +66,12 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
     base_iter = 0
     tb_writer = prepare_output_and_logger(dataset)
     gaussians = GaussianModel(dataset.sh_degree)
-    scene = Scene(dataset, gaussians)
+
+
+    override_train_idxs = override_train_idxs_dict.get(args.override_idxs, None)
+    override_test_idxs = override_test_idxs_dict.get(args.override_idxs, None)
+
+    scene = Scene(dataset, gaussians, random_init_pcd=args.random_init_pcd, llffhold=args.llffhold, override_train_idxs=override_train_idxs, override_test_idxs=override_test_idxs)
     gaussians.training_setup(opt)
     
     # Active View Selection
@@ -63,21 +79,25 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
     print(f"schema: {schema.load_its}")
     scene.train_idxs = schema.init_views
 
+    if args.inflate_path:
+        scene.load_inflated_cameras(args.inflate_path, args.inflate_skip)
+    
     active_method = methods_dict[args.method](args)
 
     init_ckpt_path = f"{args.model_path}/init.ckpt"
-    if checkpoint: # this is to continue training in SLURM after requeue
+    if checkpoint:
         if os.path.exists(checkpoint):
             first_iter, base_iter = load_checkpoint(checkpoint, gaussians, scene, opt)
         else:
             print(f"[WARNING] checkpoint {checkpoint} doesn't exist, training from scratch")
 
-    if first_iter == 0: # maybe init_ckpt has been save if preempted
+    if args.scramble and first_iter == 0: # maybe init_ckpt has been save if preempted
         save_checkpoint(gaussians, first_iter, scene, base_iter, save_path=init_ckpt_path, save_last=False)
 
     bg_color = [1, 1, 1] if dataset.white_background else [0, 0, 0]
     background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
 
+    print(f"train_idxs: {scene.train_idxs}")
     iter_start = torch.cuda.Event(enable_timing = True)
     iter_end = torch.cuda.Event(enable_timing = True)
 
@@ -123,13 +143,21 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
 
             gaussians.optimizer.zero_grad(set_to_none = True)
 
-            first_iter, _ = load_checkpoint(init_ckpt_path, gaussians, scene, opt, ignore_train_idxs=True)
-            base_iter = iteration - 1
+            if args.add_random_points > 0:
+                gaussians.add_random_gaussians(args.add_random_points, scene.cameras_extent, expand_ratio=args.expand_ratio)
+
+            if args.scramble:
+                first_iter, _ = load_checkpoint(init_ckpt_path, gaussians, scene, opt, ignore_train_idxs=True)
+                base_iter = iteration - 1
+            else:
+                gaussians.reset_opacity()
 
         iter_start.record()
 
         gaussians.update_learning_rate(iteration - base_iter)
 
+        # Every 5000 its we increase the levels of SH up to a maximum degree
+        # if iteration % 1000 == 0:
         if iteration > args.sh_up_after and iteration % args.sh_up_every == 0:
             gaussians.oneupSHdegree()
 
@@ -168,9 +196,7 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
 
             before_selection = schema.num_views_to_add(iteration + 1) > 0
             # Log and save
-            training_report(tb_writer, iteration, Ll1, loss, l1_loss, iter_start.elapsed_time(iter_end), 
-                            testing_iterations, scene, render, (pipe, background), before_selection=before_selection, 
-                            log_every_image=args.log_every_image)
+            training_report(tb_writer, iteration, Ll1, loss, l1_loss, iter_start.elapsed_time(iter_end), testing_iterations, scene, render, (pipe, background), before_selection=before_selection)
             if (iteration in saving_iterations):
                 print("\n[ITER {}] Saving Gaussians".format(iteration))
                 scene.save(iteration)
@@ -223,7 +249,7 @@ def prepare_output_and_logger(args):
         print("Tensorboard not available: not logging progress")
     return tb_writer
 
-def training_report(tb_writer, iteration, Ll1, loss, l1_loss, elapsed, testing_iterations, scene : Scene, renderFunc, renderArgs, before_selection=False, log_every_image=False):
+def training_report(tb_writer, iteration, Ll1, loss, l1_loss, elapsed, testing_iterations, scene : Scene, renderFunc, renderArgs, before_selection=False):
     if tb_writer:
         tb_writer.add_scalar('train_loss_patches/l1_loss', Ll1.item(), iteration)
         tb_writer.add_scalar('train_loss_patches/total_loss', loss.item(), iteration)
@@ -244,24 +270,18 @@ def training_report(tb_writer, iteration, Ll1, loss, l1_loss, elapsed, testing_i
                 ssim_test = 0.0
                 lpips_test = 0.0
 
-                log_images = {}
                 for idx, viewpoint in enumerate(config['cameras']):
                     image = torch.clamp(renderFunc(viewpoint, scene.gaussians, *renderArgs)["render"], 0.0, 1.0)
                     gt_image = torch.clamp(viewpoint.original_image.to("cuda"), 0.0, 1.0)
-                    if tb_writer and ((idx < 5) or log_every_image):
+                    if tb_writer and (idx < 5):
                         tb_writer.add_images(config['name'] + "_view_{}/render".format(idx), image[None], global_step=iteration)
-                        log_images[f"render/{idx:03d}"] = wandb.Image(image[None])
                         if iteration == testing_iterations[0]:
                             tb_writer.add_images(config['name'] + "_view_{}/ground_truth".format(idx), gt_image[None], global_step=iteration)
-                            log_images[f"gt/{idx:03d}"] = wandb.Image(gt_image.cpu()[None])
                     l1_test += l1_loss(image, gt_image).mean().double()
                     psnr_test += psnr(image, gt_image).mean().double()
                     ssim_test += ssim(image, gt_image).mean().double()
                     lpips.to(image.device)
                     lpips_test += lpips(image, gt_image).mean().double()
-
-                if log_every_image:
-                    wandb.log(log_images, step=iteration)
 
                 psnr_test /= len(config['cameras'])
                 l1_test /= len(config['cameras'])          
@@ -275,11 +295,11 @@ def training_report(tb_writer, iteration, Ll1, loss, l1_loss, elapsed, testing_i
                     tb_writer.add_scalar(config['name'] + '/loss_viewpoint - ssim', ssim_test, iteration)
                     tb_writer.add_scalar(config['name'] + '/loss_viewpoint - lpips', lpips_test, iteration)
                 log_dict = {config['name'] + '/l1_loss': l1_test, config['name'] + '/psnr': psnr_test,
-                            config['name'] + '/ssim': ssim_test, config['name'] + '/lpips': lpips_test,}
+                            config['name'] + '/ssim': ssim_test, config['name'] + '/lpips': psnr_test,}
                 wandb.log(log_dict, step=iteration)
 
         if tb_writer:
-            tb_writer.add_histogram("scene/opacity_histogram", scene.gaussians.get_opacity, iteration)
+            # tb_writer.add_histogram("scene/opacity_histogram", scene.gaussians.get_opacity, iteration)
             tb_writer.add_scalar('total_points', scene.gaussians.get_xyz.shape[0], iteration)
             wandb.log({'total_points': scene.gaussians.get_xyz.shape[0]}, step=iteration)
         torch.cuda.empty_cache()
@@ -303,7 +323,7 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=int, default=6009)
     parser.add_argument('--debug_from', type=int, default=-1)
     parser.add_argument('--detect_anomaly', action='store_true', default=False)
-    parser.add_argument("--test_iterations", nargs="+", type=int, default=[15_000, 20_000, 25_000, 30_000])
+    parser.add_argument("--test_iterations", nargs="+", type=int, default=[7_000, 15_000, 20_000, 25_000, 30_000])
     parser.add_argument("--save_iterations", nargs="+", type=int, default=[7_000, 30_000])
     parser.add_argument("--quiet", action="store_true")
     parser.add_argument("--checkpoint_iterations", nargs="+", type=int, default=[])
@@ -313,24 +333,32 @@ if __name__ == "__main__":
     parser.add_argument("--schema", type=str, default="all")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--reg_lambda", type=float, default=1e-6)
+    parser.add_argument("--no_neg", action="store_true")
     parser.add_argument("--I_test", action="store_true", help="Use I test to get the selection base")
     parser.add_argument("--I_acq_reg", action="store_true", help="apply reg_lambda to acq H too")
     parser.add_argument("--sh_up_every", type=int, default=5_000, help="increase spherical harmonics every N iterations")
     parser.add_argument("--sh_up_after", type=int, default=-1, help="start to increate active_sh_degree after N iterations")
     parser.add_argument("--min_opacity", type=float, default=0.005, help="min_opacity to prune")
-    parser.add_argument("--filter_out_grad", nargs="+", type=str, default=["rotation"])
-    parser.add_argument("--log_every_image", action="store_true", help="log every images during traing")
+    parser.add_argument("--add_random_points", type=int, default=-1, help="add random points after each selection")
+    parser.add_argument("--expand_ratio", type=float, default=2.0, help="expand raito to add random points")
+    parser.add_argument("--filter_out_grad", nargs="+", type=str, default=[])
+    parser.add_argument("--random_init_pcd", type=int, default=-1, help="Use random points as initialization to train on Colmap dataset")
+    parser.add_argument("--H_clamp_fraction", type=float, default=-1, help="fraction of H as upper bound, by defaul we don't clamp it")
+    parser.add_argument("--H_max", type=float, default=-1, help="maximum value of the hessians")
+    parser.add_argument("--scramble", action="store_true", help="scramble the checkpoint after selection")
+    parser.add_argument("--inflate_path", default="", type=str, help="path to the inflated dataset")
+    parser.add_argument("--inflate_skip", default=4, type=int, help="load 1/N inflated images")
+    parser.add_argument("--llffhold", default=8, type=int, help="hold out Nth view when loading llff like dataset")
+    parser.add_argument("--override_idxs", default=None, type=str, help="speical test idxs on uncertainty evaluation")
 
     args = parser.parse_args(sys.argv[1:])
     args.save_iterations.append(args.iterations)
-    if args.log_every_image:
-        args.test_iterations = []
     if args.iterations not in args.test_iterations:
         args.test_iterations.append(args.iterations)
     
     if args.start_checkpoint is None:
         args.start_checkpoint = args.model_path + "/last.pth"
-
+    
     print("Optimizing " + args.model_path)
 
     wandb.init(project='active', resume="allow", id=os.path.split(args.model_path.rstrip('/'))[-1], config=vars(args))
@@ -341,7 +369,6 @@ if __name__ == "__main__":
     # Start GUI server, configure and run training
     args.port = find_free_port()
     print(f"GUI at: {args.ip}:{args.port}")
-
 
 
     network_gui.init(args.ip, args.port)

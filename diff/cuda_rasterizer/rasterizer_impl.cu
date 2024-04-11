@@ -196,27 +196,29 @@ CudaRasterizer::BinningState CudaRasterizer::BinningState::fromChunk(char*& chun
 // Forward rendering procedure for differentiable rasterization
 // of Gaussians.
 int CudaRasterizer::Rasterizer::forward(
-	std::function<char* (size_t)> geometryBuffer,
-	std::function<char* (size_t)> binningBuffer,
-	std::function<char* (size_t)> imageBuffer,
+	std::function<char *(size_t)> geometryBuffer,
+	std::function<char *(size_t)> binningBuffer,
+	std::function<char *(size_t)> imageBuffer,
 	const int P, int D, int M,
-	const float* background,
+	const float *background,
 	const int width, int height,
-	const float* means3D,
-	const float* shs,
-	const float* colors_precomp,
-	const float* opacities,
-	const float* scales,
+	const float *means3D,
+	const float *shs,
+	const float *colors_precomp,
+	const float *opacities,
+	const float *scales,
 	const float scale_modifier,
-	const float* rotations,
-	const float* cov3D_precomp,
-	const float* viewmatrix,
-	const float* projmatrix,
-	const float* cam_pos,
+	const float *rotations,
+	const float *cov3D_precomp,
+	const float *viewmatrix,
+	const float *projmatrix,
+	const float *cam_pos,
 	const float tan_fovx, float tan_fovy,
 	const bool prefiltered,
 	float* out_color,
-	int* radii,
+	float* out_depth,
+	int *radii,
+	int *pixel_gaussian_counter,
 	bool debug)
 {
 	const float focal_y = height / (2.0f * tan_fovy);
@@ -325,12 +327,19 @@ int CudaRasterizer::Rasterizer::forward(
 		binningState.point_list,
 		width, height,
 		geomState.means2D,
+		geomState.depths,
 		feature_ptr,
 		geomState.conic_opacity,
 		imgState.accum_alpha,
 		imgState.n_contrib,
 		background,
-		out_color), debug)
+		out_color, out_depth), debug)
+
+	// copy out n_contrib so that we can track number of piels outside C++
+	if (pixel_gaussian_counter != nullptr)
+	{
+		CHECK_CUDA(cudaMemcpy(pixel_gaussian_counter, imgState.n_contrib, sizeof(uint32_t) * width * height, cudaMemcpyDeviceToDevice), debug);
+	}
 
 	return num_rendered;
 }
