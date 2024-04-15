@@ -320,6 +320,7 @@ if __name__ == "__main__":
     parser.add_argument("--min_opacity", type=float, default=0.005, help="min_opacity to prune")
     parser.add_argument("--filter_out_grad", nargs="+", type=str, default=["rotation"])
     parser.add_argument("--log_every_image", action="store_true", help="log every images during traing")
+    parser.add_argument("--override_idxs", default=None, type=str, help="speical test idxs on uncertainty evaluation")
 
     args = parser.parse_args(sys.argv[1:])
     args.save_iterations.append(args.iterations)

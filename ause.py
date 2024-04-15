@@ -105,8 +105,6 @@ for index in range(4):
         if obj == "statue":
             scale = 1.25   
         elif obj == "torch":
-            # scale = 1 / 20
-            # scale = 8 # used for 4 views
             scale = 10
         elif obj == "africa":
             scale = 4
@@ -130,15 +128,11 @@ for index in range(4):
 
         depth_pred = depth_pred.numpy() * scale
 
-        # if not USE_GAUSSIAN_GT:
-        #     depth_pred = depth_pred * (np.median(depth_gt) / np.median(depth_pred))
-    
     if opt.method == 'plenoxel':
         assert opt.foreground, " plenoxel can only be tested using foreground. "
         depth_file = sorted(glob(f"plenoxel_{opt.obj}/*_depth.npz"))[index]
         uncern_file = sorted(glob(f"plenoxel_{opt.obj}/*_uncern.npz"))[index]
 
-        # import pdb; pdb.set_trace()
         depth_pred = np.load(depth_file)["pred"][::2, ::2]
         uncern = np.load(uncern_file)["pred"][::2, ::2]
 
@@ -159,7 +153,6 @@ for index in range(4):
         depth_file = sorted(glob(f"ActiveNeRF_{opt.obj}_4/*_depth.npz"))[index]
         uncern_file = sorted(glob(f"ActiveNeRF_{opt.obj}_4/*_uncert.npz"))[index]
 
-        # import pdb; pdb.set_trace()
         depth_pred = np.load(depth_file)["depth"]
         depth_pred = np.where(np.isnan(depth_pred), 100., depth_pred)
         uncern = np.load(uncern_file)["uncern"]

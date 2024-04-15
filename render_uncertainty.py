@@ -192,7 +192,7 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
     # override_train_idxs = override_train_idxs_dict.get(args.override_idxs, None)
     # use every frames
     override_train_idxs = list(range(10_000))
-    override_test_idxs = override_test_idxs_dict.get(args.override_idxs, None)
+    override_test_idxs = override_test_idxs_dict[args.override_idxs]
     scene = Scene(dataset, gaussians, load_iteration=iteration, shuffle=False, override_train_idxs=override_train_idxs, override_test_idxs=override_test_idxs)
 
     bg_color = [1,1,1] if dataset.white_background else [0, 0, 0]
@@ -213,7 +213,7 @@ if __name__ == "__main__":
     parser.add_argument("--quiet", action="store_true")
     parser.add_argument("--perturb_scale", default=1., type=float)
     parser.add_argument("--inflate_factor", default=5, type=int)
-    parser.add_argument("--override_idxs", default=None, type=str, help="speical test idxs on uncertainty evaluation")
+    parser.add_argument("--override_idxs", type=str, help="speical test idxs on uncertainty evaluation")
     parser.add_argument("--depth_only", action="store_true", help="render depth only")
     parser.add_argument("--current", action="store_true", help="render uncertainty from current view")
     args = get_combined_args(parser)
