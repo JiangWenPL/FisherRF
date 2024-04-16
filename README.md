@@ -38,9 +38,9 @@ Please use scripts under `./scripts/` to run different experiments with differen
 bash scripts/blender_seq1.sh /PATH/TO/YOUR/DATASET/lego YOUR_EXP_PATH
 ```
 
-## Train on LF dataset
+## Uncertainty Estimation on LF Dataset
 
-Obtain LF dataset [here](https://).
+Obtain LF dataset [here](https://github.com/poetrywanderer/CF-NeRF?tab=readme-ov-file#data). You may need to preprocess the LF dataset following the [direction](https://github.com/graphdeco-inria/gaussian-splatting/tree/main?tab=readme-ov-file#processing-your-own-scenes) in the original 3D-GS.
 
 Example: `statue`
 
