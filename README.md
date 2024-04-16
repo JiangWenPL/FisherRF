@@ -49,7 +49,7 @@ Example: `statue`
 bash scripts/lf_cfnerf.sh /mnt/kostas-graid/datasets/wen/LF/ test-lf-statue statue
 
 # render uncertainty
-python render_uncertainty.py -m test-lf-statue
+python render_uncertainty.py -m test-lf-statue --override_idxs statue
 
 # calculate ause
 python ause.py gaussian statue -m test-lf-statue --data_dir /path/to/LF/dataset
