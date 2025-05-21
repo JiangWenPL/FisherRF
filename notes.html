@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>notes</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a
+href="#a-quick-walk-through-for-using-fisher-information-for-active-perception"
+id="toc-a-quick-walk-through-for-using-fisher-information-for-active-perception">A
+Quick Walk through for Using Fisher Information for Active
+Perception</a>
+<ul>
+<li><a href="#preliminaries-on-definitions-for-information"
+id="toc-preliminaries-on-definitions-for-information">Preliminaries on
+Definitions for Information</a></li>
+<li><a href="#information-gain" id="toc-information-gain">Information
+Gain</a>
+<ul>
+<li><a href="#approximation-of-hwd"
+id="toc-approximation-of-hwd">Approximation of <span
+class="math inline">\(H[w|D]\)</span></a></li>
+<li><a
+href="#approximation-of-mathbfhwd-from-empirical-fisher-information"
+id="toc-approximation-of-mathbfhwd-from-empirical-fisher-information">Approximation
+of <span class="math inline">\(\mathbf{H}&#39;&#39;[w|D]\)</span> from
+Empirical Fisher Information</a></li>
+<li><a href="#approximation-of-hwy_c-x_c-d"
+id="toc-approximation-of-hwy_c-x_c-d">Approximation of <span
+class="math inline">\(H[w|y_c, x_c, D]\)</span></a></li>
+<li><a href="#computing-the-expected-information-gain"
+id="toc-computing-the-expected-information-gain">Computing the Expected
+Information Gain</a></li>
+<li><a href="#approximate-the-hessian-matrix-mathbfhyx-w"
+id="toc-approximate-the-hessian-matrix-mathbfhyx-w">Approximate the
+Hessian Matrix <span class="math inline">\(\mathbf{H}&#39;&#39;[y|x,
+w]\)</span></a></li>
+</ul></li>
+</ul></li>
+<li><a href="#summary" id="toc-summary">Summary</a></li>
+</ul>
+</nav>
+<h1
+id="a-quick-walk-through-for-using-fisher-information-for-active-perception">A
+Quick Walk through for Using Fisher Information for Active
+Perception</h1>
+<h2 id="preliminaries-on-definitions-for-information">Preliminaries on
+Definitions for Information</h2>
+<p>We have the following basic definitions:</p>
+<p>Shannon information: <span class="math display">\[
+H[x] := -\log p(x)
+\]</span></p>
+<p>Conditional entropy: <span class="math display">\[
+H[X|Y] = \mathbb{E}_{p(x, y)}[-\log p(x|y)]
+\]</span></p>
+<p>Information Gain: <span class="math display">\[
+\mathbb{I}[X; Y] := H[X] - H[X|Y]
+\]</span></p>
+<p>Conditional Information Gain: <span class="math display">\[
+\mathbb{I}[X; Y|Z] := H[X|Z] - H[X|Y, Z]
+\]</span></p>
+<p>Conditional entropy with Bayes’ Theorem: <span
+class="math display">\[
+H[A|B] = H[B|A] - H[B] + H[A]
+\]</span></p>
+<p>Conditional entropy with multiple variables: <span
+class="math display">\[
+H[A|B, C] = H[B|A, C] - H[B|C] + H[A|C]
+\]</span></p>
+<h2 id="information-gain">Information Gain</h2>
+<p>We can simplify the notation a bit and use <span
+class="math inline">\(x_c\)</span> and <span
+class="math inline">\(y_c\)</span> to denote the candidate data point
+and its label, where we typically have access to <span
+class="math inline">\(x_c\)</span> but not <span
+class="math inline">\(y_c\)</span>. Meanwhile, we denote parameters as
+<span class="math inline">\(w\)</span> and the existing training dataset
+as <span class="math inline">\(D\)</span>, which is a collection of
+pairs <span class="math inline">\((x_i, y_i)\)</span>. An example of
+<span class="math inline">\(x_c\)</span> and <span
+class="math inline">\(y_c\)</span> can be the <span
+class="math inline">\(SE(3)\)</span> camera pose and the RGB image,
+respectively.</p>
+<p>When selecting a candidate data point <span
+class="math inline">\(x_c\)</span> for an active perception task, we can
+maximize the information gain by:</p>
+<p><span class="math display">\[
+\arg \max_{x_c} \mathbb{I}[w; y_c| x_c, D]
+\]</span></p>
+<p>The information gain can be expressed as:</p>
+<p><span class="math display">\[
+\begin{equation}
+    \mathbb{I}[w; y_c| x_c, D] = H[w| x_c, D] - H[w| y_c, x_c, D]
+\end{equation}
+\]</span></p>
+<p>Assume that <span class="math inline">\(x_c\)</span> is chosen
+independently from <span class="math inline">\(D\)</span>:</p>
+<p><span class="math display">\[
+H[w|x_c, D] = H[w | D]
+\]</span></p>
+<p>Thus we have:</p>
+<p><span class="math display">\[
+\begin{equation}
+    \mathbb{I}[w; y_c| x_c, D] = H[w| D] - H[w| y_c, x_c, D]
+\end{equation}
+\]</span></p>
+<p>Thus the problem is how we can approximate and compute the entropy
+<span class="math inline">\(H[w| D]\)</span> for any dataset <span
+class="math inline">\(D\)</span>.</p>
+<h3 id="approximation-of-hwd">Approximation of <span
+class="math inline">\(H[w|D]\)</span></h3>
+<p>We approximate the distribution of <span
+class="math inline">\(p(w|D)\)</span> with a multivariate Gaussian
+distribution.</p>
+<p>Taking Taylor expansion of <span
+class="math inline">\(H[w|D]\)</span> around the current estimate <span
+class="math inline">\(w^*\)</span>, we have:</p>
+<p><span class="math display">\[
+H[w|D] \approx H[w|D] + H&#39;[w|D] (w - w^*) + \frac{1}{2} (w - w^*)^T
+\mathbf{H}&#39;&#39;[w^*|D] (w - w^*)
+\]</span></p>
+<p>where <span
+class="math inline">\(\mathbf{H}&#39;&#39;[w^*|D]\)</span> is the
+Hessian matrix of <span class="math inline">\(H[w|D]\)</span> at <span
+class="math inline">\(w^*\)</span>.</p>
+<p>The first term is a constant given the current estimate <span
+class="math inline">\(w^*\)</span>, and the second term is close to zero
+when our model is at a local minimum because we get <span
+class="math inline">\(w\)</span> by optimizing the model with <span
+class="math inline">\(D\)</span>.</p>
+<p>Therefore, we can approximate the distribution of <span
+class="math inline">\(p(w|D)\)</span> with a multivariate Gaussian
+distribution with mean <span class="math inline">\(w^*\)</span> and
+covariance matrix <span
+class="math inline">\(\mathbf{H}&#39;&#39;[w^*|D]^{-1}\)</span>.</p>
+<p><span class="math display">\[
+\begin{equation}
+    p(w|D) \sim \mathcal{N}(w^*, \mathbf{H}&#39;&#39;[w^*|D]^{-1})
+\end{equation}
+\]</span></p>
+<p>Specifically, the <span class="math inline">\(p(w | D)\)</span> is
+given as:</p>
+<p><span class="math display">\[
+p(w|D) = \frac{1}{\sqrt{(2\pi)^n |\mathbf{H}&#39;&#39;[w^*|D]|}}
+\exp\left[-\frac{1}{2} (w - w^*)^T \mathbf{H}&#39;&#39;[w^*|D] (w -
+w^*)\right]
+\]</span></p>
+<p>where <span class="math inline">\(n\)</span> is the number of
+parameters in <span class="math inline">\(w\)</span>.</p>
+<p>The entropy of a multivariate Gaussian distribution is known to
+be:</p>
+<p><span class="math display">\[
+\begin{align}
+    H[w|D] &amp;= \mathbb{E}_{p(w|D)}[-\log p(w|D)] \\
+    &amp; \approx \mathbb{E}_{p(w|D)} \left[-\log
+\frac{1}{\sqrt{(2\pi)^n |\mathbf{H}&#39;&#39;[w^*|D]|}} \exp  \left( -
+\frac{1}{2} (w - w^*)^T \mathbf{H}&#39;&#39;[w^*|D] (w - w^*) \right)
+\right] \\
+    &amp;=  -\frac{1}{2} \log \det |\mathbf{H}&#39;&#39;[w|D]| +
+\frac{n}{2} \log(2\pi) + \frac{1}{2} n \\
+    &amp;= -\frac{1}{2} \log |\mathbf{H}&#39;&#39;[w|D]| + C_n
+\end{align}
+\]</span></p>
+<p>where <span class="math inline">\(C_n\)</span> is a constant that
+depends on the number of parameters <span
+class="math inline">\(w\)</span>.</p>
+<h3
+id="approximation-of-mathbfhwd-from-empirical-fisher-information">Approximation
+of <span class="math inline">\(\mathbf{H}&#39;&#39;[w|D]\)</span> from
+Empirical Fisher Information</h3>
+<p>We can rewrite the entropy <span
+class="math inline">\(H[w|D]\)</span> with Bayes’ theorem:</p>
+<p><span class="math display">\[
+\begin{equation}
+    H[w|D] = H[D|w] + H[w] - H[D]
+\end{equation}
+\]</span></p>
+<p><span class="math inline">\(D\)</span> is a pre-determined dataset
+thus <span class="math inline">\(H[D]\)</span> is constant. We have no
+prior knowledge of the distribution of <span
+class="math inline">\(w\)</span> thus we can assume <span
+class="math inline">\(H[w]\)</span> with an uninformative prior such as
+a uniform distribution.</p>
+<p>Taking the second derivative of the above equation with respect to
+<span class="math inline">\(w\)</span>, we have: <span
+class="math display">\[
+\mathbf{H}&#39;&#39;[w|D] \approx \mathbf{H}&#39;&#39;[D|w] +
+\mathbf{H}&#39;&#39;[w]
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{H}&#39;&#39;[w] =
+0\)</span> for the uninformative prior. Therefore we can approximate the
+Hessian matrix <span
+class="math inline">\(\mathbf{H}&#39;&#39;[w|D]\)</span> with <span
+class="math inline">\(\mathbf{H}&#39;&#39;[D|w]\)</span>. <span
+class="math display">\[
+\begin{equation}
+    \mathbf{H}&#39;&#39;[w|D] \approx \mathbf{H}&#39;&#39;[D|w]
+\end{equation}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{H}&#39;&#39;[D|w]\)</span>
+can be computed by approximating the distribution of <span
+class="math inline">\(p(D|w)\)</span>.</p>
+<p>Again, <span class="math inline">\(D\)</span> is a collection of
+pairs <span class="math inline">\((x_i, y_i)\)</span>, where <span
+class="math inline">\(x_i\)</span> is the input and <span
+class="math inline">\(y_i\)</span> is the label. Without loss of
+generality, we can have any pair <span class="math inline">\((x_i,
+y_i)\)</span> and denote it as <span class="math inline">\((x,
+y)\)</span> and the joint probability:</p>
+<p><span class="math display">\[
+p(y, x|w) = p(y|x, w) p(x|w)
+\]</span></p>
+<p>as the rendering model does not model the distribution of <span
+class="math inline">\(x\)</span> and we assume each <span
+class="math inline">\(x_i\)</span> is uniformly sampled from the dataset
+<span class="math inline">\(D\)</span>.</p>
+<p><span class="math display">\[
+p(y, x|w) = p(y|x, w) p_{\text{data}}(x)
+\]</span></p>
+<p>where <span class="math inline">\(p_{\text{data}}(x)\)</span> is the
+distribution of <span class="math inline">\(x\)</span> in the dataset
+<span class="math inline">\(D\)</span>. Thus we can compute <span
+class="math inline">\(\mathbf{H}&#39;&#39;[D|w]\)</span> by computing
+the Hessian matrix of our negative log-likelihood function. In our case
+it is the mean squared error (MSE) thus the Hessian is not dependent on
+the label <span class="math inline">\(y\)</span>.</p>
+<h3 id="approximation-of-hwy_c-x_c-d">Approximation of <span
+class="math inline">\(H[w|y_c, x_c, D]\)</span></h3>
+<p>This is similar to the approximation of <span
+class="math inline">\(H[w|D]\)</span>, except we do not have access to
+<span class="math inline">\(y_c\)</span> because that is the ground
+truth label we have not observed yet. However, later we can see our
+computation does not depend on <span
+class="math inline">\(y_c\)</span>.</p>
+<p>Similarly, we can approximate the distribution of <span
+class="math inline">\(p(w|y_c, x_c, D)\)</span> with a multivariate
+Gaussian distribution. Thus, we only need to find out the Hessian matrix
+<span class="math inline">\(\mathbf{H}&#39;&#39;[w|y_c, x_c,
+D]\)</span>.</p>
+<p>Rewrite the entropy with Bayes’ theorem:</p>
+<p><span class="math display">\[
+\begin{equation}
+   H[w| y_c, x_c, D] = H[y_c| x_c, w, D] - H[y_c|x_c, D] + H[w|x_c, D]
+\end{equation}
+\]</span></p>
+<p>We then look into each term in the above equation. First, we assume
+that all the information of <span class="math inline">\(D\)</span> has
+been observed by <span class="math inline">\(w\)</span> which is what we
+did in practice, where we only use the model <span
+class="math inline">\(w\)</span> instead of <span
+class="math inline">\(D\)</span> after training. Second, we find <span
+class="math inline">\(H[y_c|x_c, D]\)</span> is not dependent on <span
+class="math inline">\(w\)</span> because it is the ground truth label we
+have not observed yet. Third, <span class="math inline">\(x_c\)</span>
+has no contribution to <span class="math inline">\(w\)</span> because
+the model is not trained with <span class="math inline">\(x_c\)</span>
+without the label <span class="math inline">\(y_c\)</span>. <span
+class="math inline">\(H[w|x, D] = H[w|D]\)</span>.</p>
+<p>Therefore, we have:</p>
+<p><span class="math display">\[
+\begin{equation}
+    H[y_c|x_c, w, D] = H[y_c|x_c, w] - H[y_c|x_c, D]  + H[w| D]
+\end{equation}
+\]</span></p>
+<p>By taking the derivative of the above equation with respect to <span
+class="math inline">\(w\)</span> twice, we have:</p>
+<p><span class="math display">\[
+\begin{equation}
+    \mathbf{H}&#39;&#39;[w|y_c, x_c, D] = \mathbf{H}&#39;&#39;[y_c|x_c,
+w] + \mathbf{H}&#39;&#39;[w| D]
+\end{equation}
+\]</span></p>
+<p>Both of the terms can be computed by the Hessian matrix of the
+negative log-likelihood function.</p>
+<h3 id="computing-the-expected-information-gain">Computing the Expected
+Information Gain</h3>
+<p>Bringing the above equations together, we have:</p>
+<p><span class="math display">\[
+\begin{align}
+    &amp; \mathbb{I}[w; y_c| x_c, D] = H[w| x_c, D] - H[w| y_c, x_c, D]
+\\
+    &amp;= H[w| D] -H[w|y_c, x_c, D] \\
+    &amp;= \left(-\frac{1}{2} \log \det \mathbf{H}&#39;&#39;[w| D] + C_n
+\right) - \left(-\frac{1}{2} \log \det \mathbf{H}&#39;&#39;[w| y_c, x_c,
+D] + C_n \right) \\
+    &amp;\approx -\frac{1}{2} \log\det \mathbf{H}&#39;&#39;[w| D] +
+\frac{1}{2} \log \det \left( \mathbf{H}&#39;&#39;[w| y_c, x_c] +
+\mathbf{H}&#39;&#39;[w| D] \right) \\
+    &amp;\approx -\frac{1}{2} \log\det
+\left(\mathbf{H}&#39;&#39;[D|w]^{-1} \mathbf{H}&#39;&#39;[y_c| x_c, w] +
+I\right)
+\end{align}
+\]</span></p>
+<p>where <span class="math inline">\(I\)</span> is the identity matrix.
+The expectation is taken when we consider the Gaussian distribution of
+<span class="math inline">\(p(w|D) \sim \mathcal{N}(w^*,
+\mathbf{H}&#39;&#39;[w|D]^{-1})\)</span>.</p>
+<p>For ease of computation, we can further use the trace instead of the
+log determinant: <span class="math display">\[
+\begin{equation}
+    -\frac{1}{2} \log\det \left(\mathbf{H}&#39;&#39;[D|w]^{-1}
+\mathbf{H}&#39;&#39;[y_c| x_c, w] + I\right) \leq -\frac{1}{2}
+\text{tr}\left(\mathbf{H}&#39;&#39;[D|w]^{-1} \mathbf{H}&#39;&#39;[y_c|
+x_c, w]\right)
+\end{equation}
+\]</span></p>
+<p>One quick proof is for any square matrix <span
+class="math inline">\(A\)</span> we have:</p>
+<p><span class="math display">\[
+\begin{align}
+    \log \det (A+I) \leq \log \prod_{i} (\lambda_i + 1) = \sum_{i} \log
+(\lambda_i + 1) \leq \sum_{i} \lambda_i = \text{tr}(A)
+\end{align}
+\]</span></p>
+<p>where the equality holds when <span class="math inline">\(A =
+0\)</span>.</p>
+<h3 id="approximate-the-hessian-matrix-mathbfhyx-w">Approximate the
+Hessian Matrix <span class="math inline">\(\mathbf{H}&#39;&#39;[y|x,
+w]\)</span></h3>
+<p>Assume our model is a function <span class="math inline">\(\tilde{y}
+= f(x; w)\)</span>, where <span class="math inline">\(x\)</span> is the
+input and <span class="math inline">\(w\)</span> is the parameter. We
+can compute the Hessian matrix <span
+class="math inline">\(\mathbf{H}&#39;&#39;[y|x, w]\)</span> for the
+negative log-likelihood <span class="math inline">\(-\log p(y|x,
+w)\)</span> as:</p>
+<p><span class="math display">\[
+\begin{align}
+    \mathbf{H}&#39;&#39;[y|x, w] &amp;= \nabla^2_{w} -\log p(y|x, w) \\
+    &amp;= \nabla_{w} f(x; w)^T \; \mathbb{E}_{p\left(y|f(x;w)\right)}
+\left[ \nabla_{f(x;w)}^2 p(y | f(x;w))\right] \; \nabla_{w} f(x; w) \\
+\end{align}
+\]</span></p>
+<p>where <span class="math inline">\(\nabla^2_{w}\)</span> is the second
+derivative with respect to <span class="math inline">\(w\)</span>. <span
+class="math inline">\(\mathbb{E}_{p\left(y|f(x;w)\right)} \left[
+\nabla_{f(x;w)}^2 p(y | f(x;w))\right] = I\)</span> because our negative
+log-likelihood is MSE. Thus we have:</p>
+<p><span class="math display">\[
+\begin{equation}
+    \mathbf{H}&#39;&#39;[y|x, w] = \nabla_{w} f(x; w)^T \; \nabla_{w}
+f(x; w)
+\end{equation}
+\]</span></p>
+<p>where <span class="math inline">\(\nabla_{w} f(x; w)\)</span> is the
+Jacobian matrix of <span class="math inline">\(f(x; w)\)</span> with
+respect to <span class="math inline">\(w\)</span>.</p>
+<p><span class="math inline">\(\mathbf{H}&#39;&#39;[D | w]\)</span> can
+be computed similarly as we assume each data point <span
+class="math inline">\((x_i, y_i)\)</span> is independent. Another
+interpretation is Fisher Information is additive.</p>
+<h1 id="summary">Summary</h1>
+<p>We can compute the expected information gain by:</p>
+<p><span class="math display">\[
+\begin{equation}
+    \mathbb{I}[w; y_c| x_c, D] \approx -\frac{1}{2}
+\text{tr}\left(\mathbf{H}&#39;&#39;[D|w]^{-1} \mathbf{H}&#39;&#39;[y_c|
+x_c, w]\right)
+\end{equation}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{H}&#39;&#39;[y_c| x_c, w] =
+\nabla_{w} f(x_c; w) \; \nabla_{w} f(x_c; w)^T\)</span> and <span
+class="math inline">\(\mathbf{H}&#39;&#39;[D|w] = \sum_{i} \nabla_{w}
+f(x_i; w)^T \; \nabla_{w} f(x_i; w)\)</span>.</p>
+</body>
+</html>
