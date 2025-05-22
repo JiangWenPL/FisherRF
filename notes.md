@@ -185,7 +185,7 @@ By taking the derivative of the above equation with respect to $w$ twice, we hav
 
 $$
 \begin{equation}
-    \mathbf{H}''[w|y_c, x_c, D] = \mathbf{H}''[y_c|x_c, w] + \mathbf{H}''[w| D]
+    \mathbf{H}''[y|x_c, w, D] = \mathbf{H}''[y_c|x_c, w] + \mathbf{H}''[w| D]
 \end{equation}
 $$
 
