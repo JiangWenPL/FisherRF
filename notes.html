@@ -448,15 +448,14 @@ Information Gain</h3>
     &amp; \mathbb{I}[w; y_c| x_c, D] = H[w| x_c, D] - H[w| y_c, x_c, D]
 \\
     &amp;= H[w| D] -H[w|y_c, x_c, D] \\
-    &amp;= \left(-\frac{1}{2} \log \det \mathbf{H}&#39;&#39;[w| D] + C_n
-\right) - \left(-\frac{1}{2} \log \det \mathbf{H}&#39;&#39;[w| y_c, x_c,
-D] + C_n \right) \\
-    &amp;\approx -\frac{1}{2} \log\det \mathbf{H}&#39;&#39;[w| D] +
+    &amp;\approx \left(-\frac{1}{2} \log \det \mathbf{H}&#39;&#39;[w| D]
++ C_n \right) - \left(-\frac{1}{2} \log \det \mathbf{H}&#39;&#39;[w|
+y_c, x_c, D] + C_n \right) \\
+    &amp;= -\frac{1}{2} \log\det \mathbf{H}&#39;&#39;[w| D] +
 \frac{1}{2} \log \det \left( \mathbf{H}&#39;&#39;[w| y_c, x_c] +
 \mathbf{H}&#39;&#39;[w| D] \right) \\
-    &amp;\approx -\frac{1}{2} \log\det
-\left(\mathbf{H}&#39;&#39;[D|w]^{-1} \mathbf{H}&#39;&#39;[y_c| x_c, w] +
-I\right)
+    &amp;= -\frac{1}{2} \log\det \left(\mathbf{H}&#39;&#39;[D|w]^{-1}
+\mathbf{H}&#39;&#39;[y_c| x_c, w] + I\right)
 \end{align}
 \]</span></p>
 <p>where <span class="math inline">\(I\)</span> is the identity matrix.

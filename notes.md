@@ -199,9 +199,9 @@ $$
 \begin{align}
     & \mathbb{I}[w; y_c| x_c, D] = H[w| x_c, D] - H[w| y_c, x_c, D] \\
     &= H[w| D] -H[w|y_c, x_c, D] \\
-    &= \left(-\frac{1}{2} \log \det \mathbf{H}''[w| D] + C_n \right) - \left(-\frac{1}{2} \log \det \mathbf{H}''[w| y_c, x_c, D] + C_n \right) \\
-    &\approx -\frac{1}{2} \log\det \mathbf{H}''[w| D] + \frac{1}{2} \log \det \left( \mathbf{H}''[w| y_c, x_c] + \mathbf{H}''[w| D] \right) \\
-    &\approx -\frac{1}{2} \log\det \left(\mathbf{H}''[D|w]^{-1} \mathbf{H}''[y_c| x_c, w] + I\right)
+    &\approx \left(-\frac{1}{2} \log \det \mathbf{H}''[w| D] + C_n \right) - \left(-\frac{1}{2} \log \det \mathbf{H}''[w| y_c, x_c, D] + C_n \right) \\
+    &= -\frac{1}{2} \log\det \mathbf{H}''[w| D] + \frac{1}{2} \log \det \left( \mathbf{H}''[w| y_c, x_c] + \mathbf{H}''[w| D] \right) \\
+    &= -\frac{1}{2} \log\det \left(\mathbf{H}''[D|w]^{-1} \mathbf{H}''[y_c| x_c, w] + I\right)
 \end{align}
 $$
 
