@@ -106,8 +106,8 @@ $$
 \begin{align}
     H[w|D] &= \mathbb{E}_{p(w|D)}[-\log p(w|D)] \\
     & \approx \mathbb{E}_{p(w|D)} \left[-\log \frac{1}{\sqrt{(2\pi)^n |\mathbf{H}''[w^*|D]|}} \exp  \left( - \frac{1}{2} (w - w^*)^T \mathbf{H}''[w^*|D] (w - w^*) \right) \right] \\
-    &=  -\frac{1}{2} \log \det |\mathbf{H}''[w|D]| + \frac{n}{2} \log(2\pi) + \frac{1}{2} n \\
-    &= -\frac{1}{2} \log |\mathbf{H}''[w|D]| + C_n 
+    &=  -\frac{1}{2} \log \det |\mathbf{H}''[w^*|D]| + \frac{n}{2} \log(2\pi) + \frac{1}{2} n \\
+    &= -\frac{1}{2} \log |\mathbf{H}''[w^*|D]| + C_n 
 \end{align}
 $$
 
@@ -177,7 +177,7 @@ Therefore, we have:
 
 $$
 \begin{equation}
-    H[y_c|x_c, w, D] = H[y_c|x_c, w] - H[y_c|x_c, D]  + H[w| D]
+    H[w| y_c, x_c, D] = H[y_c|x_c, w] - H[y_c|x_c, D]  + H[w| D]
 \end{equation}
 $$
 
@@ -185,7 +185,7 @@ By taking the derivative of the above equation with respect to $w$ twice, we hav
 
 $$
 \begin{equation}
-    \mathbf{H}''[y|x_c, w, D] = \mathbf{H}''[y_c|x_c, w] + \mathbf{H}''[w| D]
+    \mathbf{H}''[w|y_c, x_c, D] = \mathbf{H}''[y_c|x_c, w] + \mathbf{H}''[w| D]
 \end{equation}
 $$
 

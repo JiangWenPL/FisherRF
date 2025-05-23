@@ -324,9 +324,9 @@ be:</p>
 \frac{1}{\sqrt{(2\pi)^n |\mathbf{H}&#39;&#39;[w^*|D]|}} \exp  \left( -
 \frac{1}{2} (w - w^*)^T \mathbf{H}&#39;&#39;[w^*|D] (w - w^*) \right)
 \right] \\
-    &amp;=  -\frac{1}{2} \log \det |\mathbf{H}&#39;&#39;[w|D]| +
+    &amp;=  -\frac{1}{2} \log \det |\mathbf{H}&#39;&#39;[w^*|D]| +
 \frac{n}{2} \log(2\pi) + \frac{1}{2} n \\
-    &amp;= -\frac{1}{2} \log |\mathbf{H}&#39;&#39;[w|D]| + C_n
+    &amp;= -\frac{1}{2} \log |\mathbf{H}&#39;&#39;[w^*|D]| + C_n
 \end{align}
 \]</span></p>
 <p>where <span class="math inline">\(C_n\)</span> is a constant that
@@ -427,15 +427,15 @@ class="math inline">\(H[w|x, D] = H[w|D]\)</span>.</p>
 <p>Therefore, we have:</p>
 <p><span class="math display">\[
 \begin{equation}
-    H[y_c|x_c, w, D] = H[y_c|x_c, w] - H[y_c|x_c, D]  + H[w| D]
+    H[w| y_c, x_c, D] = H[y_c|x_c, w] - H[y_c|x_c, D]  + H[w| D]
 \end{equation}
 \]</span></p>
 <p>By taking the derivative of the above equation with respect to <span
 class="math inline">\(w\)</span> twice, we have:</p>
 <p><span class="math display">\[
 \begin{equation}
-    \mathbf{H}&#39;&#39;[y|x_c, w, D] = \mathbf{H}&#39;&#39;[y_c|x_c, w]
-+ \mathbf{H}&#39;&#39;[w| D]
+    \mathbf{H}&#39;&#39;[w|y_c, x_c, D] = \mathbf{H}&#39;&#39;[y_c|x_c,
+w] + \mathbf{H}&#39;&#39;[w| D]
 \end{equation}
 \]</span></p>
 <p>Both of the terms can be computed by the Hessian matrix of the
